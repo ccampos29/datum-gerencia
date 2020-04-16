@@ -1,0 +1,26 @@
+<?php
+return [
+    'adminEmail' => 'admin@example.com',
+    'supportEmail' => 'support@example.com',
+    'senderEmail' => 'noreply@example.com',
+    'senderName' => 'Example.com mailer',
+    'user.passwordResetTokenExpire' => 3600,
+    'rutaBaseLogo' => '/imagenes/logos/',
+    'urlImagenesVehiculos' => '/imagenes/vehiculos/',
+    'rutaImagenesVehiculos' => '/web/imagenes/vehiculos/',
+    'urlImagenesEmpresas' => '/imagenes/empresas/',
+    'rutaImagenesEmpresas' => '/web/imagenes/empresas/',
+    'rutaBaseImagenes' => '/web/imagenes/',
+    'rutaArchivosImpuestos' => '/web/archivos/impuestos/',
+    'rutaBaseImpuestos' => '/web/archivos/',
+    'rutaArchivosDocumentosV' => '/web/archivos/documentos/',
+    'rutaBaseDocumentosV' => '/web/archivos/',
+    'rutaArchivosSeguros' => '/web/archivos/seguros/',
+    'rutaBaseSeguros' => '/web/archivos/',
+    'rutaArchivosDocumentosUsuarios' => '/web/archivos/documentosUsuarios/',
+    'urlImagenesCombustibles' => '/imagenes/combustible/',
+    'rutaImagenesCombustibles' => '/web/imagenes/combustible/',
+    'urlImagenesChecklist' => '/imagenes/checklist/',
+    'rutaImagenesChecklist' => '/web/imagenes/checklist/',
+    
+];

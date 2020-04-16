@@ -1,0 +1,14 @@
+let kamehameha   =  1500;
+let life_veggeta =  25000;
+
+let count_atks   =  0;
+let total_life   =  0;
+
+do {
+  if(count_atks !=0 && count_atks%3) {
+    total_life += kamehameha;
+    count_atks++;
+  }
+ 
+}
+while (total_life < life_veggeta);

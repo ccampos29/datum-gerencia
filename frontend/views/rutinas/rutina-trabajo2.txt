@@ -1,0 +1,36 @@
+
+            <?= $form->field($model, 'trabajosFormulario')->widget(MultipleInput::className(), [
+                'addButtonPosition' => MultipleInput::POS_FOOTER,
+                'columns' => [
+                    [
+                        'name'  => 'rutina_id',
+                        'options' => [
+                            'class' => 'hidden',
+                        ],
+                    ],
+                    [
+                        'name'  => 'trabajo',
+                        'type'  => \kartik\select2\Select2::className(),
+                        'title' => 'Trabajo',
+                        'options' => [
+                            'data' => ArrayHelper::map(Trabajos::find()->all(), 'id', 'nombre'),
+                            'class' => 'input-priority',
+                        ],
+                    ],
+                    [
+                        'name'  => 'cantidad',
+                        'title' => 'Cantidad',
+                        'enableError' => true,
+                        'options' => [
+                            'class' => 'input-priority'
+                        ]
+                    ],
+                    [
+                        'name'  => 'observacion',
+                        'title' => 'Observacion',
+                        'enableError' => true,
+                        'options' => []
+                    ],
+                ]
+            ])->label(false)
+            ?>
