@@ -12,6 +12,9 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -48,6 +51,25 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => true,
             'rules' => [
+                [
+                    'class' => 'yii\rest\UrlRule', 
+                    'pluralize' => false, 
+                    'controller' => ['api\User', 'api\Checklist', 'api\Combustible'], 
+                    'extraPatterns' => [
+                        'POST authenticate'=>'authenticate',
+                        'GET getvehiclebyuser' => 'checklist/getvehiclebyuser',
+                        'GET consultamedicion' => 'checklist/consultamedicion',
+                        'GET tiposchecklist' => 'checklist/tiposchecklist',
+                        'POST obtenerperiodicidadchecklist' => 'checklist/obtenerperiodicidadchecklist',
+                        'POST calificacioneschecklist' => 'checklist/calificacioneschecklist',
+                        'POST calificarchecklist' => 'checklist/calificarchecklist',
+                        'POST subirfotochecklist' => 'checklist/subirfotochecklist',
+                        'GET createcombustible' => 'combustible/createcombustible',
+                        'GET getdepartamentos' => 'combustible/getdepartamentos',
+                        'GET getmunicipios' => 'combustible/getmunicipios',
+                        'POST Storecombustible' => 'combustible/storecombustible',
+                    ]
+                ],
             ],
         ],
     ],
