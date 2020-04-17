@@ -47,31 +47,17 @@ return [
             'showScriptName' => FALSE,
             'enablePrettyUrl' => TRUE,
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => true,
-            'rules' => [
-                [
-                    'class' => 'yii\rest\UrlRule', 
-                    'pluralize' => false, 
-                    'controller' => ['api\User', 'api\Checklist', 'api\Combustible'], 
-                    'extraPatterns' => [
-                        'POST authenticate'=>'authenticate',
-                        'GET getvehiclebyuser' => 'checklist/getvehiclebyuser',
-                        'GET consultamedicion' => 'checklist/consultamedicion',
-                        'GET tiposchecklist' => 'checklist/tiposchecklist',
-                        'POST obtenerperiodicidadchecklist' => 'checklist/obtenerperiodicidadchecklist',
-                        'POST calificacioneschecklist' => 'checklist/calificacioneschecklist',
-                        'POST calificarchecklist' => 'checklist/calificarchecklist',
-                        'POST subirfotochecklist' => 'checklist/subirfotochecklist',
-                        'GET createcombustible' => 'combustible/createcombustible',
-                        'GET getdepartamentos' => 'combustible/getdepartamentos',
-                        'GET getmunicipios' => 'combustible/getmunicipios',
-                        'POST Storecombustible' => 'combustible/storecombustible',
-                    ]
-                ],
-            ],
-        ],
+        'urlManager'=>array(
+            'urlFormat'=>'path',
+            'showScriptName'=>false,
+            'rules'=>array(
+                '<controller:\w+>/<id:\d+>'=>'<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
+                '<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+            ),
+            'urlSuffix'=>'.html',
+            'caseSensitive'=>false
+        ),
     ],
     'modules' => ['gridview' => ['class' => 'kartik\grid\Module']],
     'params' => $params,
