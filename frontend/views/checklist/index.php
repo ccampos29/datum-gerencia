@@ -10,7 +10,7 @@ use yii\web\JsExpression;
 /* @var $searchModel frontend\models\ChecklistSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Checklists';
+$this->title = 'Checklists2';
 $this->params['breadcrumbs'][] = $this->title;
 $urlVehiculos = Url::to(['vehiculos/vehiculos-list']);
 $vehiculo = empty($searchModel->vehiculo_id) ? '' : Vehiculos::findOne($searchModel->vehiculo_id)->placa;
