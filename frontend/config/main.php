@@ -54,7 +54,6 @@ return [
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule', 
-                    'pluralize' => false, 
                     'controller' => ['api\User', 'api\Checklist', 'api\Combustible'], 
                     'extraPatterns' => [
                         'POST authenticate'=>'authenticate',
