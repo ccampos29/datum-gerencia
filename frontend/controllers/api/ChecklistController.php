@@ -481,7 +481,8 @@ class ChecklistController extends ActiveController
             $imagen->ruta_archivo = $rutaCarpetaDocumento . $imagen->nombre_archivo;
             $imagen->checklist_id = $id_checklist;
             if (!$imagen->save()) {
-                return $response['status'] = "error";
+                $response['status'] = "error";
+                return $response;
             }
 
             $guardoBien = move_uploaded_file($archivo, $imagen->ruta_archivo);
@@ -490,9 +491,11 @@ class ChecklistController extends ActiveController
             $imagen->save();
             if (!$guardoBien) {
                 $imagen->delete();
-                return $response['status'] = "error";
+                $response['status'] = "error";
+                return $response;
             }else{
                 $response['status'] = "success";
+                return $response;
             }
         }else{
             return $response['status'] = "error";
