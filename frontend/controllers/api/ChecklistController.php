@@ -14,10 +14,13 @@ use frontend\models\Vehiculos;
 use frontend\models\TiposChecklist;
 use frontend\models\NovedadesChecklist;
 use frontend\models\NovedadesTiposChecklist;
+use frontend\models\TiposChecklistDetalle;
 use frontend\models\ChecklistSearch;
 use frontend\models\EstadosChecklistConfiguracion;
 use frontend\models\CriteriosEvaluacionesDetalle;
 use frontend\models\CalificacionesChecklist;
+use frontend\models\ImagenesChecklist;
+use yii\web\UploadedFile;
 use SoapHeader;
 use SoapClient;
 use yii\helpers\Json;
@@ -38,7 +41,7 @@ class ChecklistController extends ActiveController
         $behaviors = parent::behaviors();
         $behaviors['authenticator'] = [
            'class' => HttpBearerAuth::className(),
-           'except' => ['options', 'authenticate', 'subirfotochecklist'],
+           'except' => ['options', 'authenticate'],
         ];
         return $behaviors;
     }
@@ -50,10 +53,17 @@ class ChecklistController extends ActiveController
     }
 
     public function actionGetvehiclebyuser($user_id){
-        $conductorVehiculos = VehiculosConductores::find()->where(['conductor_id'=>$user_id])->all();
+        $user = User::findOne($user_id);
 
         $response = array();
         $vehiculos = array();
+
+        if($user->tipo_usuario_id == 7){ //jefe taller
+            $conductorVehiculos = VehiculosConductores::find()->where(['empresa_id' => $user->empresa_id])->all();
+        }else if($user->tipo_usuario_id == 6){ //conductor
+            $conductorVehiculos = VehiculosConductores::find()->where(['conductor_id'=> $user_id, 'empresa_id' => $user->empresa_id])->all();
+        }
+
         foreach($conductorVehiculos as $conductorVehiculo){
             $vehiculo = Vehiculos::find()->where(['id' => $conductorVehiculo->vehiculo_id])->one();
             array_push($vehiculos, $vehiculo);
@@ -69,14 +79,26 @@ class ChecklistController extends ActiveController
         return $response;
     }
 
-    /*
-    * Metodo que permite la consulta de una medicion via web service.
-    */
-    public function actionConsultamedicion($idVehiculo)
-    {
+    public function actionGetuserbyvehicle($vehicle_id){
+        $vehicle = Vehiculos::findOne($vehicle_id);
+
+        $response = array();
+        $usuarios = array();        
+
+        $conductorVehiculos = VehiculosConductores::find()->where(['vehiculo_id'=> $vehicle->id])->all();
+
+        foreach($conductorVehiculos as $conductorVehiculo){
+            $usuario = User::find()->where(['id' => $conductorVehiculo->conductor_id])->one();
+            array_push($usuarios, $usuario);
+        }
+
+        return $usuarios;
+    }
+
+    public function actionConsultamedicion($vehicle_id){
         $vehiculo = new Vehiculos;
 
-        $vehiculo = Vehiculos::findOne($idVehiculo);
+        $vehiculo = Vehiculos::findOne($vehicle_id);
 
         if(!isset($vehiculo))
             return ["status"=>"error"];
@@ -122,16 +144,20 @@ class ChecklistController extends ActiveController
         }
     }
 
-    public function actionTiposchecklist($id_vehiculo){
-        $vehiculo = Vehiculos::findOne($id_vehiculo);
+    public function actionTiposchecklist($vehicle_id){
+        $vehiculo = Vehiculos::findOne($vehicle_id);
         if(!isset($vehiculo))
             return ["status"=>"error"];
-        $tiposChecklist = TiposChecklist::find()->where(['tipo_vehiculo_id' => $vehiculo->tipo_vehiculo_id])->all();
+
+        $tiposChecklist = TiposChecklistDetalle::find()->where(['tipo_vehiculo_id' => $vehiculo->tipo_vehiculo_id])->all();
+        
         $arrayTipoChecklist = [];
         $response["status"] = "success";
         foreach ($tiposChecklist as $tipoChecklist){
-            $arrayTipoChecklist[] = ['id' => $tipoChecklist->id,
-                                  'name' => $tipoChecklist->nombre];
+            $arrayTipoChecklist[] = [
+                'id' => $tipoChecklist->tipo_checklist_id,
+                'name' => $tipoChecklist->tipoChecklist->nombre
+            ];
         };
         $response["tipos_checklist"] = $arrayTipoChecklist;
         return $response;
@@ -177,11 +203,6 @@ class ChecklistController extends ActiveController
         return $medicionCalculada;
     }
 
-    /**
-     * Creates a new Checklist model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
     public function actionCreate(){
         $model = new Checklist();
         $i = 0;
@@ -432,7 +453,7 @@ class ChecklistController extends ActiveController
         return $response;
     }
 
-    public function actionSubirfotochecklist(){
+    public function actionSubirfotochecklist($id_checklist){
         $rutaCarpeta = Yii::$app->basePath . Yii::$app->params['rutaBaseImagenes'];
         if (!file_exists($rutaCarpeta)) {
             mkdir($rutaCarpeta);
@@ -443,20 +464,34 @@ class ChecklistController extends ActiveController
         }
 
         header('Access-Control-Allow-Origin:*');
+        $archivo = $_FILES['imagenChecklist']['tmp_name'];
 
-        $rutaCarpetaDocumento = $rutaCarpeta . 'checklist' . "holamundo" . '/';
-        if (!file_exists($rutaCarpetaDocumento)) {
-            mkdir($rutaCarpetaDocumento);
-        }
+        if (!empty($archivo)) {
+            $nombre = basename($_FILES['imagenChecklist']['name']);
+            $pos = strrpos($nombre, '.');
+            $extension = substr($nombre, $pos+1);
 
-        $file = time(). "_" . basename($_FILES['photo']['name']);
-        $tmp_name = $_FILES['photo']['tmp_name'];
+            $imagen = new ImagenesChecklist();
+            $imagen->nombre_archivo_original = $nombre;
+            $imagen->nombre_archivo = uniqid('checklist_' . $id_checklist . '_') . "." . $extension;
+            $rutaCarpetaDocumento = $rutaCarpeta . 'checklist' . $id_checklist . '/';
+            if (!file_exists($rutaCarpetaDocumento)) {
+                mkdir($rutaCarpetaDocumento);
+            }
+            $imagen->ruta_archivo = $rutaCarpetaDocumento . $imagen->nombre_archivo;
+            $imagen->checklist_id = $id_checklist;
+            if (!$imagen->save()) {
+                return $response['status'] = "error";
+            }
 
-        if(move_uploaded_file($tmp_name, $rutaCarpetaDocumento . $file)){
-            echo json_encode([
-                "Message" => "The file has been uploaded",
-                "Status" => "OK"
-            ]);
+            $guardoBien = move_uploaded_file($archivo, $imagen->ruta_archivo);
+
+            $imagen->nombre_archivo = 'checklist' . $id_checklist . "/" . $imagen->nombre_archivo;
+            $imagen->save();
+            if (!$guardoBien) {
+                return "error";
+                $imagen->delete();
+            }
         }
     }
 }
