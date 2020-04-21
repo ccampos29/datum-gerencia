@@ -489,9 +489,13 @@ class ChecklistController extends ActiveController
             $imagen->nombre_archivo = 'checklist' . $id_checklist . "/" . $imagen->nombre_archivo;
             $imagen->save();
             if (!$guardoBien) {
-                return "error";
                 $imagen->delete();
+                return $response['status'] = "error";
+            }else{
+                $response['status'] = "success";
             }
+        }else{
+            return $response['status'] = "error";
         }
     }
 }

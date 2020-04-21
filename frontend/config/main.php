@@ -63,7 +63,7 @@ return [
                         'GET tiposchecklist' => 'checklist/tiposchecklist',//validado
                         'POST obtenerperiodicidadchecklist' => 'checklist/obtenerperiodicidadchecklist',//validado
                         'POST calificacioneschecklist' => 'checklist/calificacioneschecklist',// validado las empresas id tienen problemas hay que corregir eso con los desarrolladores
-                        'POST calificarchecklist' => 'checklist/calificarchecklist',//validado
+                        'POST calificarchecklist' => 'checklist/calificarchecklist',
                         'POST subirfotochecklist' => 'checklist/subirfotochecklist',//validado
                         'GET createcombustible' => 'combustible/createcombustible',
                         'GET getdepartamentos' => 'combustible/getdepartamentos',
