@@ -56,6 +56,7 @@ return [
                     'class' => 'yii\rest\UrlRule', 
                     'controller' => ['api\User', 'api\Checklist', 'api\Combustible'], 
                     'extraPatterns' => [
+                        //imagenes_checklist, imagenes_combustibles, checklist, calificaciones_checklist, mediciones, combustibles
                         'POST authenticate'=>'authenticate',//validado
                         'GET getvehiclebyuser' => 'checklist/getvehiclebyuser',//validado
                         'GET getuserbyvehicle' => 'checklist/getuserbyvehicle',//validado
@@ -63,12 +64,12 @@ return [
                         'GET tiposchecklist' => 'checklist/tiposchecklist',//validado
                         'POST obtenerperiodicidadchecklist' => 'checklist/obtenerperiodicidadchecklist',//validado
                         'POST calificacioneschecklist' => 'checklist/calificacioneschecklist',// validado las empresas id tienen problemas hay que corregir eso con los desarrolladores
-                        'POST calificarchecklist' => 'checklist/calificarchecklist',
+                        'POST calificarchecklist' => 'checklist/calificarchecklist', //validado
                         'POST subirfotochecklist' => 'checklist/subirfotochecklist',//validado
-                        'GET createcombustible' => 'combustible/createcombustible',
-                        'GET getdepartamentos' => 'combustible/getdepartamentos',
-                        'GET getmunicipios' => 'combustible/getmunicipios',
-                        'POST Storecombustible' => 'combustible/storecombustible',
+                        'GET createcombustible' => 'combustible/createcombustible',//validado
+                        'GET getdepartamentos' => 'combustible/getdepartamentos',//validado
+                        'GET getmunicipios' => 'combustible/getmunicipios',//validado
+                        'POST Storecombustible' => 'combustible/storecombustible', // validado las empresas id tienen problemas hay que corregir eso con los desarrolladores
                     ]
                 ],
             ],

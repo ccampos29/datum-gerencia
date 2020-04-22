@@ -112,37 +112,7 @@ class CombustibleController extends ActiveController
         return $response;
     }
 
-    public function actionStorecombustible(){
-        //1 => 'Si', 0 => 'No'
-        $params = Yii::$app->request->post();
-        $model = new Combustibles();
-        $model->load($params);
-
-        $valMedicionFicticio = $params['Combustibles']['medicion_compare'];//es la que viene del web service
-        $valMedicion = $params['Combustibles']['medicion_actual'];//es la que digita el usuario
-
-        if($valMedicionFicticio < $valMedicion){
-            $response['status'] = "error";
-            $response['message'] = "El valor de la medicion no puede ser mayor al reportado por web service.";
-        }else{
-            if ($model->save()) {
-                $model->almacenarImagenes($model->id);
-                $medicion = $this->actionConsultaMedicion($model->vehiculo_id);
-                $medicion = Json::decode($medicion);
-                $model->almacenarMedicion($medicion, $model->vehiculo_id);
-
-                $response['status'] = "success";
-                $response['message'] = "Tanqueo registrado con éxito.";
-            }
-            else{
-                $response['status'] = "error";
-                $response['message'] = "No se registro el tanqueo.";
-            }
-        }
-        return $response;
-    }
-
-    public function actionConsultaMedicion($idVehiculo){
+    public function consultaMedicion($idVehiculo){
         $vehiculo = new Vehiculos;
 
         $vehiculo = Vehiculos::findOne($idVehiculo);
@@ -184,5 +154,35 @@ class CombustibleController extends ActiveController
             return Json::encode($val);
         }
 
+    }
+
+    public function actionStorecombustible(){
+        //1 => 'Si', 0 => 'No'
+        $params = Yii::$app->request->post();
+        $model = new Combustibles();
+        $model->load($params);
+
+        $valMedicionFicticio = $params['Combustibles']['medicion_compare'];//es la que viene del web service
+        $valMedicion = $params['Combustibles']['medicion_actual'];//es la que digita el usuario
+
+        if($valMedicionFicticio < $valMedicion){
+            $response['status'] = "error";
+            $response['message'] = "El valor de la medicion no puede ser mayor al reportado por web service.";
+        }else{
+            if ($model->save()) {
+                // $model->almacenarImagenes($model->id);
+                $medicion = $this->consultaMedicion($model->vehiculo_id);
+                $medicion = Json::decode($medicion);
+                $model->almacenarMedicion($medicion, $model->vehiculo_id);
+
+                $response['status'] = "success";
+                $response['message'] = "Tanqueo registrado con éxito.";
+            }
+            else{
+                $response['status'] = "error";
+                $response['message'] = "No se registro el tanqueo.";
+            }
+        }
+        return $response;
     }
 }
