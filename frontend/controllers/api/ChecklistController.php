@@ -65,7 +65,10 @@ class ChecklistController extends ActiveController
         }
 
         foreach($conductorVehiculos as $conductorVehiculo){
-            $vehiculo = Vehiculos::find()->where(['id' => $conductorVehiculo->vehiculo_id])->one();
+            $vehiculo = Vehiculos::find()->where(['id' => $conductorVehiculo->vehiculo_id, 'empresa_id' => $conductorVehiculo->empresa_id])->one();
+            if(!isset($vehiculo))
+                continue;
+
             $bandera = true;
             foreach($vehiculos as $temp){
                 if($temp->id == $vehiculo->id){
