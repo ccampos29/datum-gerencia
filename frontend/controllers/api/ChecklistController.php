@@ -78,7 +78,7 @@ class ChecklistController extends ActiveController
         }
 
         if(count($vehiculos) == 0){
-            return ["status"=>"error"];
+            $response['status'] = "error";
         }else{
             $response['status'] = "success";
             $response['vehiculos'] = $vehiculos;
