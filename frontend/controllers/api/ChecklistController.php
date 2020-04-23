@@ -20,6 +20,7 @@ use frontend\models\EstadosChecklistConfiguracion;
 use frontend\models\CriteriosEvaluacionesDetalle;
 use frontend\models\CalificacionesChecklist;
 use frontend\models\ImagenesChecklist;
+use frontend\models\Mediciones;
 use yii\web\UploadedFile;
 use SoapHeader;
 use SoapClient;
@@ -254,17 +255,35 @@ class ChecklistController extends ActiveController
                     return $response;
                 }
                 if ($model->save()) {
-                    $medicion = $this->actionConsultaMedicion($model->vehiculo_id);
-                    $medicion = $medicion['data'];
-                    $model->almacenarMedicion($medicion, $model->vehiculo_id);
+                    $medicionConsulta = $this->actionConsultaMedicion($model->vehiculo_id);
+                    $medicionConsulta = $medicionConsulta['data'];
 
+                    //almacenar la medicion
+                    $medicion = new Mediciones();
+                    $medicion->fecha_medicion = $medicionConsulta['fecha'];
+                    $medicion->hora_medicion = $medicionConsulta['hora'];
+                    if($medicionConsulta['function']=='horom'){
+                        $medicion->valor_medicion = round($medicionConsulta['valor']/60);
+                    
+                    }else{
+                        $medicion->valor_medicion = $medicionConsulta['valor'];
+                    
+                    }
+                    $medicion->estado_vehiculo = $medicionConsulta['estado'];
+                    $medicion->tipo_medicion = $medicionConsulta['tipo'];
+                    $medicion->vehiculo_id = $model->vehiculo_id;
+                    $medicion->usuario_id = $model->usuario_id;
+                    $medicion->proviene_de = 'Checklist';
+                    $medicion->empresa_id = $model->empresa_id;
+                    
+                    $medicion->save();
+                    
                     $response['status'] = "success";
                     $response['message'] = "Checklist generado con exito.";
                     $response['id_checklist'] = $model->id;
                     $response['id_vehiculo'] = $model->vehiculo_id;
                     $response['id_tipo_checklist'] = $model->tipo_checklist_id;
-
-                    // return $this->redirect(['calificaciones-checklist/create', 'idChecklist' => $model->id, 'idv' => $model->vehiculo_id, 'idTipo' => $model->tipo_checklist_id]);
+                    
 
                     return $response;
                 } else {
@@ -365,9 +384,6 @@ class ChecklistController extends ActiveController
                 foreach ($key as $k) {
                     $array[] = [intval($k)];
                 }
-                if($model->almacenarImagenes($idChecklist)){
-                    $model->almacenarImagenes($idChecklist);
-                }
                 $model->asociarCalificacion($key);
                 $model->asociarNovedadesMantenimientos($key);         
             }
@@ -464,7 +480,7 @@ class ChecklistController extends ActiveController
         return $response;
     }
 
-    public function actionSubirfotochecklist($id_checklist){
+    public function actionSubirfotochecklist($id_checklist, $empresa_id){
         $rutaCarpeta = Yii::$app->basePath . Yii::$app->params['rutaBaseImagenes'];
         if (!file_exists($rutaCarpeta)) {
             mkdir($rutaCarpeta);
@@ -491,6 +507,7 @@ class ChecklistController extends ActiveController
             }
             $imagen->ruta_archivo = $rutaCarpetaDocumento . $imagen->nombre_archivo;
             $imagen->checklist_id = $id_checklist;
+            $imagen->empresa_id = $empresa_id;
             if (!$imagen->save()) {
                 $response['status'] = "error";
                 return $response;

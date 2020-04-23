@@ -56,7 +56,7 @@ return [
                     'class' => 'yii\rest\UrlRule', 
                     'controller' => ['api\User', 'api\Checklist', 'api\Combustible'], 
                     'extraPatterns' => [
-                        //imagenes_checklist, imagenes_combustibles, checklist, calificaciones_checklist, mediciones, combustibles
+                        //imagenes_checklist, imagenes_combustibles, checklist, calificaciones_checklist, mediciones, combustibles, novedades_mantenimiento
                         'POST authenticate'=>'authenticate',//validado
                         'GET getvehiclebyuser' => 'checklist/getvehiclebyuser',//validado
                         'GET getuserbyvehicle' => 'checklist/getuserbyvehicle',//validado

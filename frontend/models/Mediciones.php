@@ -52,7 +52,9 @@ class Mediciones extends MyActiveRecord
      * @return mixed[]
      */
     public function beforeSave($insert) {
-        $this->empresa_id = Yii::$app->user->identity->empresa_id;
+        if(isset(Yii::$app->user->identity->empresa_id)){
+            $this->empresa_id = Yii::$app->user->identity->empresa_id;
+        }
         return parent::beforeSave($insert);
     }
     /**

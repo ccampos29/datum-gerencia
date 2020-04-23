@@ -199,7 +199,11 @@ class CalificacionesChecklist extends \common\models\MyActiveRecord
             $calif->vehiculo_id = $key[4][0];
             $calif->tipo_checklist_id = $key[5][0];
             $calif->checklist_id = $key[6][0];
-            $calif->empresa_id = Yii::$app->user->identity->empresa_id;
+            if(isset(Yii::$app->user->identity->empresa_id))
+                $calif->empresa_id = Yii::$app->user->identity->empresa_id;
+            else
+                $calif->empresa_id = $key[7][0];
+            
             $calif->valor_texto_editable = $key[3][0];
 
             if (!$calif->save()) {
@@ -214,7 +218,10 @@ class CalificacionesChecklist extends \common\models\MyActiveRecord
             $calif->vehiculo_id = $key[4][0];
             $calif->tipo_checklist_id = $key[5][0];
             $calif->checklist_id = $key[6][0];
-            $calif->empresa_id = Yii::$app->user->identity->empresa_id;
+            if(isset(Yii::$app->user->identity->empresa_id))
+                $calif->empresa_id = Yii::$app->user->identity->empresa_id;
+            else
+                $calif->empresa_id = $key[7][0];
 
             if (!$calif->save()) {
                 print_r($calif->getErrors());
@@ -256,7 +263,10 @@ class CalificacionesChecklist extends \common\models\MyActiveRecord
                 $checklist = Checklist::find()->where(['id' => $key[6][0]])->one();
                 $novedades->medicion = $checklist->medicion_actual;
                 $novedades->trabajo_id = $noveCheck->trabajo_id;
-                $novedades->empresa_id = Yii::$app->user->identity->empresa_id;
+                if(isset(Yii::$app->user->identity->empresa_id))
+                    $novedades->empresa_id = Yii::$app->user->identity->empresa_id;
+                else
+                    $novedades->empresa_id = $key[7][0];
                 $novedades->estado = 'Pendiente';
                 $novedades->proviene_de = 'Checklist';
                 $novedades->checklist_id = $checklist->id;
